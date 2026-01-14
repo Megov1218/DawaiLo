@@ -1,6 +1,7 @@
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import useAppStore from './store/useAppStore';
 import RoleGuard from './components/RoleGuard';
+import Home from './pages/Home';
 import Login from './pages/Login';
 import DoctorDashboard from './pages/doctor/DoctorDashboard';
 import CreatePrescription from './pages/doctor/CreatePrescription';
@@ -14,6 +15,7 @@ export default function App() {
   return (
     <BrowserRouter>
       <Routes>
+        <Route path="/" element={<Home />} />
         <Route path="/login" element={<Login />} />
         
         <Route path="/doctor" element={
@@ -46,7 +48,7 @@ export default function App() {
           </RoleGuard>
         } />
         
-        <Route path="/" element={
+        <Route path="/dashboard" element={
           role ? <Navigate to={`/${role}`} replace /> : <Navigate to="/login" replace />
         } />
       </Routes>

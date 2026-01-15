@@ -10,13 +10,14 @@ export default function Home() {
       title: '🩺 Doctor Portal',
       color: 'from-blue-400 to-blue-600',
       hoverColor: 'hover:from-blue-500 hover:to-blue-700',
-      description: 'Create digital prescriptions with precision',
+      description: 'Manage patients and create prescriptions',
       features: [
-        'Search and select patients',
-        'Add medicines with exact dosage',
-        'Set frequency and intake times',
-        'Define treatment duration',
-        'Update prescriptions anytime'
+        'Register new patients',
+        'View all your patients',
+        'Create digital prescriptions',
+        'Set dosage and schedules',
+        'Edit or stop medicines',
+        'Track prescription history'
       ],
       icon: '🩺'
     },
@@ -111,8 +112,8 @@ export default function Home() {
               <div className="w-20 h-20 bg-gradient-to-br from-blue-400 to-blue-600 rounded-full flex items-center justify-center text-4xl mb-4 shadow-lg">
                 🩺
               </div>
-              <h4 className="font-bold text-xl text-gray-900 mb-2">Doctor Prescribes</h4>
-              <p className="text-gray-600 max-w-xs">Digital prescription with exact details</p>
+              <h4 className="font-bold text-xl text-gray-900 mb-2">Doctor Manages</h4>
+              <p className="text-gray-600 max-w-xs">Register patients & prescribe medicines</p>
             </div>
             
             <div className="text-4xl text-purple-400 hidden md:block">→</div>

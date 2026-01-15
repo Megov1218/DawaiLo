@@ -1,24 +1,35 @@
 import { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
+import { toast } from 'react-hot-toast';
 import useAppStore from '../store/useAppStore';
-import { authenticateUser } from '../utils/storage';
+import { api } from '../utils/api';
+import LoadingSpinner from '../components/LoadingSpinner';
 
 export default function Login() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [error, setError] = useState('');
+  const [loading, setLoading] = useState(false);
   const login = useAppStore(state => state.login);
   const navigate = useNavigate();
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    const user = authenticateUser(email, password);
+    setLoading(true);
     
-    if (user) {
-      login(user);
-      navigate(`/${user.role}`);
-    } else {
-      setError('Invalid credentials');
+    try {
+      const result = await api.login(email, password);
+      
+      if (result.success) {
+        login(result.user);
+        toast.success(`Welcome back, ${result.user.name}!`);
+        navigate(`/${result.user.role}`);
+      } else {
+        toast.error(result.message || 'Invalid credentials');
+      }
+    } catch (error) {
+      toast.error('Connection error. Please ensure the server is running.');
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -56,13 +67,12 @@ export default function Login() {
             />
           </div>
 
-          {error && <p className="text-red-600 font-medium">{error}</p>}
-
           <button
             type="submit"
-            className="w-full bg-gradient-to-r from-purple-600 to-blue-600 text-white py-3 rounded-lg font-semibold text-lg hover:from-purple-700 hover:to-blue-700 transition-all hover:scale-105 transform shadow-lg"
+            disabled={loading}
+            className="w-full bg-gradient-to-r from-purple-600 to-blue-600 text-white py-3 rounded-lg font-semibold text-lg hover:from-purple-700 hover:to-blue-700 transition-all hover:scale-105 transform shadow-lg disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100"
           >
-            Login
+            {loading ? <LoadingSpinner size="sm" /> : 'Login'}
           </button>
         </form>
 

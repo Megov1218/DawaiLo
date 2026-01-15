@@ -27,3 +27,13 @@ body {
 .animate-fade-in {
   animation: fade-in 0.8s ease-out;
 }
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.animate-spin {
+  animation: spin 1s linear infinite;
+}

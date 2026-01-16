@@ -2,170 +2,154 @@
 
 A prescription-driven medicine management system with role-based access for doctors, pharmacists, and patients.
 
-## 🎉 Production Ready!
+## 🚀 Quick Deploy to Render
 
-This application is now **production-ready** with:
-- ✅ JWT Authentication
-- ✅ Password Hashing (bcrypt)
-- ✅ Environment Variables
-- ✅ Rate Limiting
-- ✅ Security Headers
-- ✅ Logging & Monitoring
-- ✅ Docker Support
-- ✅ Multi-platform Deployment
+### Step 1: Push to GitHub
+```bash
+git add .
+git commit -m "Ready for deployment"
+git push origin main
+```
 
-**See [PRODUCTION_READY.md](PRODUCTION_READY.md) for complete details**
+### Step 2: Deploy
+1. Go to https://render.com
+2. Sign up with GitHub
+3. Click "New" → "Web Service"
+4. Select your `dawai-lo` repository
+5. Configure:
+   - **Build Command:** `npm install && npm run build`
+   - **Start Command:** `node server/index.js`
+6. Add Environment Variables:
+   ```
+   NODE_ENV=production
+   JWT_SECRET=<generate-random-string>
+   JWT_EXPIRES_IN=7d
+   DB_PATH=./server/dawai-lo.db
+   CORS_ORIGIN=*
+   RATE_LIMIT_WINDOW_MS=900000
+   RATE_LIMIT_MAX_REQUESTS=100
+   LOG_LEVEL=info
+   ```
+7. Click "Create Web Service"
 
-## Features
+**Generate JWT_SECRET:**
+```bash
+node -e "console.log(require('crypto').randomBytes(32).toString('hex'))"
+```
 
-- **Doctor Portal**: Manage patients and create prescriptions
-- **Pharmacist Portal**: View prescriptions for accurate dispensing
-- **Patient Portal**: Track medicine adherence with notifications
-- **Browser Notifications**: Timely reminders for medicine intake
-- **Adherence Tracking**: Complete history and statistics
-- **Secure Backend**: JWT auth, password hashing, rate limiting
+### Step 3: Test
+Visit your Render URL and login with:
+- Doctor: doctor@test.com / doctor123
+- Pharmacist: pharmacist@test.com / pharma123
+- Patient: patient@test.com / patient123
 
-## Tech Stack
+---
 
-**Frontend:**
-- React + Vite
-- Tailwind CSS
-- Zustand (state management)
-- React Router
-- Day.js
-- React Hot Toast
-
-**Backend:**
-- Node.js + Express
-- SQLite (production-ready for PostgreSQL)
-- JWT Authentication
-- bcrypt Password Hashing
-- Helmet Security
-- Rate Limiting
-
-## Quick Start
-
-### Development
+## 💻 Local Development
 
 ```bash
 # Install dependencies
 npm install
 
-# Copy environment file
-cp .env.example .env
-
-# Run both frontend and backend
+# Run development (frontend + backend)
 npm run dev:all
+
+# Frontend: http://localhost:5173
+# Backend: http://localhost:3001
 ```
 
-The frontend will be at `http://localhost:5173`  
-The backend API will be at `http://localhost:3001`
+---
 
-### Production
+## 🏗️ Tech Stack
 
-See [DEPLOYMENT.md](DEPLOYMENT.md) for complete deployment guide.
+**Frontend:** React, Vite, Tailwind CSS, Zustand, React Router  
+**Backend:** Node.js, Express, SQLite, JWT, bcrypt  
+**Security:** Helmet, CORS, Rate Limiting, Password Hashing
 
-**Quick Deploy to Railway:**
-1. Push to GitHub
-2. Connect to Railway
-3. Add environment variables
-4. Deploy! (15 minutes)
+---
 
-## Test Credentials
+## 📋 Features
 
-- **Doctor**: doctor@test.com / doctor123
-- **Pharmacist**: pharmacist@test.com / pharma123
-- **Patient**: patient@test.com / patient123
+- **Doctor Portal:** Manage patients and create prescriptions
+- **Pharmacist Portal:** View prescriptions for dispensing
+- **Patient Portal:** Track medicine adherence with notifications
+- **Security:** JWT authentication, password hashing, role-based access
+- **Notifications:** Browser notifications for medicine reminders
 
-## Documentation
+---
 
-- **[QUICK_START.md](QUICK_START.md)** - Get running in 3 steps
-- **[DEPLOYMENT.md](DEPLOYMENT.md)** - Production deployment guide
-- **[PRODUCTION_READY.md](PRODUCTION_READY.md)** - Production readiness report
-- **[FEATURES.md](FEATURES.md)** - Complete feature list
-- **[SETUP.md](SETUP.md)** - Detailed setup instructions
+## 📁 Project Structure
 
-## Security Features
+```
+dawai-lo/
+├── src/                    # Frontend React app
+│   ├── components/         # Reusable UI components
+│   ├── pages/             # Route pages (doctor/pharmacist/patient)
+│   ├── store/             # Zustand state management
+│   └── utils/             # API client, notifications, helpers
+├── server/                # Backend Node.js server
+│   ├── middleware/        # Auth middleware
+│   ├── utils/            # Logger
+│   ├── config.js         # Environment config
+│   ├── database.js       # SQLite setup
+│   └── index.js          # Express server
+├── .env.example          # Environment variables template
+└── package.json          # Dependencies and scripts
+```
 
-- JWT token-based authentication
-- bcrypt password hashing (salt rounds: 10)
-- Rate limiting (100 req/15min per IP)
+---
+
+## 🔐 Security Features
+
+- JWT token authentication
+- bcrypt password hashing
+- Role-based access control
+- Rate limiting (100 req/15min)
 - CORS protection
 - Security headers (Helmet)
-- Role-based access control
-- Input validation
 - SQL injection prevention
 
-## Environment Variables
+---
 
-Required for production:
+## 🌐 Environment Variables
+
+Copy `.env.example` to `.env` and update:
 
 ```bash
-NODE_ENV=production
-JWT_SECRET=<your-secure-secret>
-CORS_ORIGIN=<your-frontend-url>
+NODE_ENV=development
+PORT=3001
+JWT_SECRET=your-secret-key
+JWT_EXPIRES_IN=7d
+CORS_ORIGIN=http://localhost:5173
 ```
 
-See `.env.example` for all options.
+---
 
-## Deployment Options
+## 📦 Scripts
 
-- **Railway** (Recommended) - One-click deploy
-- **Render** - Free tier available
-- **Docker** - Works anywhere
-- **Vercel + Railway** - Split frontend/backend
+```bash
+npm run dev          # Frontend only
+npm run server       # Backend only
+npm run dev:all      # Both frontend and backend
+npm run build        # Build for production
+npm start            # Production mode
+```
 
-## API Endpoints
+---
 
-All endpoints require JWT authentication (except `/api/auth/login`):
+## 🆘 Troubleshooting
 
-- `POST /api/auth/login` - User login
-- `GET /api/patients` - List patients (doctor)
-- `POST /api/patients` - Register patient (doctor)
-- `GET /api/prescriptions/*` - Prescription management
-- `GET /api/medicines/*` - Medicine data
-- `POST /api/adherence` - Mark doses (patient)
+**Build fails:** Check Node.js version (18.x recommended)  
+**Login fails:** Verify JWT_SECRET is set  
+**CORS errors:** Check CORS_ORIGIN matches your frontend URL  
+**Database issues:** Delete `server/dawai-lo.db` and restart
 
-## Database
+---
 
-- **Development:** SQLite
-- **Production:** SQLite (ready for PostgreSQL)
-- **Migrations:** Automatic on startup
-- **Backups:** Recommended daily
-
-## Monitoring
-
-- Built-in logging with levels (error, warn, info, debug)
-- Health check endpoint: `/health`
-- Request logging with Morgan
-- Error tracking
-- User action audit trail
-
-## Performance
-
-- **Current Capacity:** 100-500 concurrent users
-- **Response Time:** <100ms average
-- **Database:** Indexed for performance
-- **Scalable:** Ready for PostgreSQL + Redis
-
-## License
+## 📄 License
 
 MIT
 
-## Support
-
-- GitHub Issues for bugs
-- Discussions for questions
-- See documentation for guides
-
 ---
 
-**Ready to deploy?** See [DEPLOYMENT.md](DEPLOYMENT.md)
-
-**Need help?** Check [QUICK_START.md](QUICK_START.md)
-
-**Production checklist?** See [PRODUCTION_READY.md](PRODUCTION_READY.md)
-
----
-
-*Built with ❤️ for better healthcare outcomes* 💊
+**Built with ❤️ for better healthcare outcomes** 💊

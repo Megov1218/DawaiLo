@@ -10,6 +10,11 @@ const useAppStore = create(
       
       login: (userData) => set({ user: userData, role: userData.role }),
       logout: () => set({ user: null, role: null }),
+      
+      clearAuth: () => {
+        localStorage.removeItem('dawai-lo-token');
+        set({ user: null, role: null });
+      }
     }),
     {
       name: 'dawai-lo-auth',

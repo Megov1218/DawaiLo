@@ -1,70 +1,110 @@
-const API_BASE = 'http://localhost:3001/api';
+const API_BASE = import.meta.env.VITE_API_URL || '/api';
+
+// Token management
+const getToken = () => localStorage.getItem('dawai-lo-token');
+const setToken = (token) => localStorage.setItem('dawai-lo-token', token);
+const removeToken = () => localStorage.removeItem('dawai-lo-token');
+
+// API request helper with auth
+const apiRequest = async (endpoint, options = {}) => {
+  const token = getToken();
+  
+  const headers = {
+    'Content-Type': 'application/json',
+    ...options.headers
+  };
+
+  if (token) {
+    headers['Authorization'] = `Bearer ${token}`;
+  }
+
+  const response = await fetch(`${API_BASE}${endpoint}`, {
+    ...options,
+    headers
+  });
+
+  // Handle token expiration
+  if (response.status === 401 || response.status === 403) {
+    removeToken();
+    window.location.href = '/login';
+    throw new Error('Session expired. Please login again.');
+  }
+
+  return response;
+};
 
 export const api = {
   // Auth
   login: async (email, password) => {
-    const res = await fetch(`${API_BASE}/auth/login`, {
+    const res = await fetch(`${API_BASE.replace('/api', '')}/api/auth/login`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ email, password })
     });
-    return res.json();
+    const data = await res.json();
+    
+    if (data.success && data.token) {
+      setToken(data.token);
+    }
+    
+    return data;
+  },
+
+  logout: () => {
+    removeToken();
   },
 
   // Patients
   getPatients: async () => {
-    const res = await fetch(`${API_BASE}/patients`);
+    const res = await apiRequest('/patients');
     return res.json();
   },
 
   getPatient: async (id) => {
-    const res = await fetch(`${API_BASE}/patients/${id}`);
+    const res = await apiRequest(`/patients/${id}`);
     return res.json();
   },
 
   registerPatient: async (data) => {
-    const res = await fetch(`${API_BASE}/patients`, {
+    const res = await apiRequest('/patients', {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(data)
     });
     return res.json();
   },
 
   searchPatients: async (query) => {
-    const res = await fetch(`${API_BASE}/patients/search?q=${encodeURIComponent(query)}`);
+    const res = await apiRequest(`/patients/search?q=${encodeURIComponent(query)}`);
     return res.json();
   },
 
   // Prescriptions
   getPrescriptionsByPatient: async (patientId) => {
-    const res = await fetch(`${API_BASE}/prescriptions/patient/${patientId}`);
+    const res = await apiRequest(`/prescriptions/patient/${patientId}`);
     return res.json();
   },
 
   getPrescriptionsByDoctor: async (doctorId) => {
-    const res = await fetch(`${API_BASE}/prescriptions/doctor/${doctorId}`);
+    const res = await apiRequest(`/prescriptions/doctor/${doctorId}`);
     return res.json();
   },
 
   getAllPrescriptions: async () => {
-    const res = await fetch(`${API_BASE}/prescriptions`);
+    const res = await apiRequest('/prescriptions');
     return res.json();
   },
 
   createPrescription: async (data) => {
-    const res = await fetch(`${API_BASE}/prescriptions`, {
+    const res = await apiRequest('/prescriptions', {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(data)
     });
     return res.json();
   },
 
   updatePrescription: async (id, data) => {
-    const res = await fetch(`${API_BASE}/prescriptions/${id}`, {
+    const res = await apiRequest(`/prescriptions/${id}`, {
       method: 'PUT',
-      headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(data)
     });
     return res.json();
@@ -72,17 +112,17 @@ export const api = {
 
   // Medicines
   getMedicinesByPrescription: async (prescriptionId) => {
-    const res = await fetch(`${API_BASE}/medicines/prescription/${prescriptionId}`);
+    const res = await apiRequest(`/medicines/prescription/${prescriptionId}`);
     return res.json();
   },
 
   getMedicinesByPatient: async (patientId) => {
-    const res = await fetch(`${API_BASE}/medicines/patient/${patientId}`);
+    const res = await apiRequest(`/medicines/patient/${patientId}`);
     return res.json();
   },
 
   stopMedicine: async (medicineId) => {
-    const res = await fetch(`${API_BASE}/medicines/${medicineId}/stop`, {
+    const res = await apiRequest(`/medicines/${medicineId}/stop`, {
       method: 'PATCH'
     });
     return res.json();
@@ -90,14 +130,13 @@ export const api = {
 
   // Adherence
   getAdherenceLogs: async (patientId) => {
-    const res = await fetch(`${API_BASE}/adherence/patient/${patientId}`);
+    const res = await apiRequest(`/adherence/patient/${patientId}`);
     return res.json();
   },
 
   markDose: async (data) => {
-    const res = await fetch(`${API_BASE}/adherence`, {
+    const res = await apiRequest('/adherence', {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(data)
     });
     return res.json();

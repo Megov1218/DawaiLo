@@ -3,3 +3,6 @@ dist
 .DS_Store
 *.log
 server/dawai-lo.db
+.env
+.env.local
+.env.production

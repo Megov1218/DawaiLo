@@ -1,11 +1,13 @@
 import Database from 'better-sqlite3';
+import bcrypt from 'bcryptjs';
 import { fileURLToPath } from 'url';
 import { dirname, join } from 'path';
+import { config } from './config.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
-const db = new Database(join(__dirname, 'dawai-lo.db'));
+const db = new Database(config.database.path);
 
 // Enable foreign keys
 db.pragma('foreign_keys = ON');
@@ -66,18 +68,23 @@ db.exec(`
 // Seed initial data if empty
 const userCount = db.prepare('SELECT COUNT(*) as count FROM users').get();
 if (userCount.count === 0) {
+  console.log('🌱 Seeding database with initial users...');
+  
   const insertUser = db.prepare(`
     INSERT INTO users (id, name, email, password, role) 
     VALUES (?, ?, ?, ?, ?)
   `);
 
-  insertUser.run('doc1', 'Dr. Sharma', 'doctor@test.com', 'doctor123', 'doctor');
-  insertUser.run('pharma1', 'Pharmacist Kumar', 'pharmacist@test.com', 'pharma123', 'pharmacist');
-  insertUser.run('patient1', 'Rajesh Singh', 'patient@test.com', 'patient123', 'patient');
-  insertUser.run('patient2', 'Priya Patel', 'patient2@test.com', 'patient123', 'patient');
-  insertUser.run('patient3', 'Amit Verma', 'patient3@test.com', 'patient123', 'patient');
+  // Hash passwords
+  const hashPassword = (password) => bcrypt.hashSync(password, 10);
 
-  console.log('✅ Database seeded with initial users');
+  insertUser.run('doc1', 'Dr. Sharma', 'doctor@test.com', hashPassword('doctor123'), 'doctor');
+  insertUser.run('pharma1', 'Pharmacist Kumar', 'pharmacist@test.com', hashPassword('pharma123'), 'pharmacist');
+  insertUser.run('patient1', 'Rajesh Singh', 'patient@test.com', hashPassword('patient123'), 'patient');
+  insertUser.run('patient2', 'Priya Patel', 'patient2@test.com', hashPassword('patient123'), 'patient');
+  insertUser.run('patient3', 'Amit Verma', 'patient3@test.com', hashPassword('patient123'), 'patient');
+
+  console.log('✅ Database seeded with initial users (passwords hashed)');
 }
 
 export default db;

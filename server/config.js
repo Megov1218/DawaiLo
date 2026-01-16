@@ -7,7 +7,7 @@ export const config = {
   port: parseInt(process.env.PORT) || 3001,
   
   jwt: {
-    secret: process.env.JWT_SECRET || 'fallback-secret-key-change-this',
+    secret: process.env.JWT_SECRET || 'dawailo-jwt-secret-2026',
     expiresIn: process.env.JWT_EXPIRES_IN || '7d'
   },
   
@@ -16,7 +16,7 @@ export const config = {
   },
   
   cors: {
-    origin: process.env.CORS_ORIGIN || 'http://localhost:5173'
+    origin: process.env.CORS_ORIGIN || '*'
   },
   
   rateLimit: {

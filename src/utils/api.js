@@ -1,5 +1,3 @@
-const API_BASE = import.meta.env.VITE_API_URL || '/api';
-
 // Token management
 const getToken = () => localStorage.getItem('dawai-lo-token');
 const setToken = (token) => localStorage.setItem('dawai-lo-token', token);
@@ -18,7 +16,7 @@ const apiRequest = async (endpoint, options = {}) => {
     headers['Authorization'] = `Bearer ${token}`;
   }
 
-  const response = await fetch(`${API_BASE}${endpoint}`, {
+  const response = await fetch(endpoint, {
     ...options,
     headers
   });
@@ -36,7 +34,7 @@ const apiRequest = async (endpoint, options = {}) => {
 export const api = {
   // Auth
   login: async (email, password) => {
-    const res = await fetch(`${API_BASE.replace('/api', '')}/api/auth/login`, {
+    const res = await fetch('/api/auth/login', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ email, password })
@@ -56,17 +54,17 @@ export const api = {
 
   // Patients
   getPatients: async () => {
-    const res = await apiRequest('/patients');
+    const res = await apiRequest('/api/patients');
     return res.json();
   },
 
   getPatient: async (id) => {
-    const res = await apiRequest(`/patients/${id}`);
+    const res = await apiRequest(`/api/patients/${id}`);
     return res.json();
   },
 
   registerPatient: async (data) => {
-    const res = await apiRequest('/patients', {
+    const res = await apiRequest('/api/patients', {
       method: 'POST',
       body: JSON.stringify(data)
     });
@@ -74,28 +72,28 @@ export const api = {
   },
 
   searchPatients: async (query) => {
-    const res = await apiRequest(`/patients/search?q=${encodeURIComponent(query)}`);
+    const res = await apiRequest(`/api/patients/search?q=${encodeURIComponent(query)}`);
     return res.json();
   },
 
   // Prescriptions
   getPrescriptionsByPatient: async (patientId) => {
-    const res = await apiRequest(`/prescriptions/patient/${patientId}`);
+    const res = await apiRequest(`/api/prescriptions/patient/${patientId}`);
     return res.json();
   },
 
   getPrescriptionsByDoctor: async (doctorId) => {
-    const res = await apiRequest(`/prescriptions/doctor/${doctorId}`);
+    const res = await apiRequest(`/api/prescriptions/doctor/${doctorId}`);
     return res.json();
   },
 
   getAllPrescriptions: async () => {
-    const res = await apiRequest('/prescriptions');
+    const res = await apiRequest('/api/prescriptions');
     return res.json();
   },
 
   createPrescription: async (data) => {
-    const res = await apiRequest('/prescriptions', {
+    const res = await apiRequest('/api/prescriptions', {
       method: 'POST',
       body: JSON.stringify(data)
     });
@@ -103,7 +101,7 @@ export const api = {
   },
 
   updatePrescription: async (id, data) => {
-    const res = await apiRequest(`/prescriptions/${id}`, {
+    const res = await apiRequest(`/api/prescriptions/${id}`, {
       method: 'PUT',
       body: JSON.stringify(data)
     });
@@ -112,17 +110,17 @@ export const api = {
 
   // Medicines
   getMedicinesByPrescription: async (prescriptionId) => {
-    const res = await apiRequest(`/medicines/prescription/${prescriptionId}`);
+    const res = await apiRequest(`/api/medicines/prescription/${prescriptionId}`);
     return res.json();
   },
 
   getMedicinesByPatient: async (patientId) => {
-    const res = await apiRequest(`/medicines/patient/${patientId}`);
+    const res = await apiRequest(`/api/medicines/patient/${patientId}`);
     return res.json();
   },
 
   stopMedicine: async (medicineId) => {
-    const res = await apiRequest(`/medicines/${medicineId}/stop`, {
+    const res = await apiRequest(`/api/medicines/${medicineId}/stop`, {
       method: 'PATCH'
     });
     return res.json();
@@ -130,12 +128,12 @@ export const api = {
 
   // Adherence
   getAdherenceLogs: async (patientId) => {
-    const res = await apiRequest(`/adherence/patient/${patientId}`);
+    const res = await apiRequest(`/api/adherence/patient/${patientId}`);
     return res.json();
   },
 
   markDose: async (data) => {
-    const res = await apiRequest('/adherence', {
+    const res = await apiRequest('/api/adherence', {
       method: 'POST',
       body: JSON.stringify(data)
     });
